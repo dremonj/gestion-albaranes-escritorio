@@ -27,6 +27,16 @@ controlar el **inventario**. Cada persona tiene **su propia cuenta** (usuario y 
   y datos de ejemplo.
 - **Acerca de**: qué es un albarán y cómo funciona la aplicación.
 
+## Cuenta de prueba
+
+La primera vez que se abre la aplicación en un ordenador se crea sola una cuenta de prueba con datos de ejemplo:
+
+| Usuario | Contraseña |
+|---------|------------|
+| `demo`  | `demo1234` |
+
+En la pantalla de inicio de sesión también aparece el botón **«Entrar con la cuenta de prueba»**.
+
 ## Cómo ejecutarla
 
 ### Opción 1: el `.exe` (no hace falta instalar nada)
@@ -52,8 +62,8 @@ python main.py
 
 ## Cómo probarla
 
-1. Al abrirla por primera vez, crea tu cuenta. Deja marcada la casilla **«Rellenar con datos de ejemplo»** para tener
-   clientes, productos y albaranes con los que practicar.
+1. Entra con la **cuenta de prueba** (`demo` / `demo1234`), o crea tu propia cuenta en **«Crear cuenta»**. Si marcas
+   **«Rellenar mi cuenta con datos de ejemplo»**, tendrás clientes, productos y albaranes con los que practicar.
 2. Pulsa **＋ Nuevo albarán**, elige un cliente y un producto, cambia la cantidad y pulsa **Guardar y emitir**.
    Recibirá un número y el stock bajará (compruébalo en **Inventario**).
 3. En el albarán, pulsa **Ver / imprimir PDF**.
@@ -71,6 +81,7 @@ pytest
 
 En una base de datos SQLite en `%APPDATA%\GestionAlbaranes\albaranes.db`, la misma para el `.exe` y para el código.
 Desde **Mi empresa y cuenta → Guardar copia…** puedes hacer copias de seguridad.
+Si ocurre un error inesperado, se muestra un aviso y el detalle se guarda en `errores.log`, en esa misma carpeta.
 
 ## Crear el `.exe`
 

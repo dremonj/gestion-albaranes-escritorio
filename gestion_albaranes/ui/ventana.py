@@ -1,11 +1,14 @@
 """Ventana principal: alterna entre el inicio de sesión y la aplicación con su menú lateral."""
 
 import sys
+import traceback
+from datetime import datetime
 from pathlib import Path
+from tkinter import messagebox
 
 import customtkinter as ctk
 
-from .. import APP_NOMBRE, db
+from .. import APP_NOMBRE, VERSION, db, demo
 from ..errores import ErrorUsuario
 from ..logica import Gestion
 from .comun import FONDO, MENU, MENU_HOVER, AZUL, AZUL_OSC, Aviso, configurar_estilos, error, fuente
@@ -50,6 +53,11 @@ class Aplicacion(ctk.CTk):
     def __init__(self, conn=None):
         super().__init__()
         self.conn = conn or db.conectar()
+        self.report_callback_exception = self._error_inesperado
+        try:
+            demo.asegurar_cuenta_demo(self.conn)
+        except Exception:
+            self._registrar_error(traceback.format_exc())
         configurar_estilos(self)
         self.title(APP_NOMBRE)
         self.geometry("1280x800")
@@ -64,6 +72,20 @@ class Aplicacion(ctk.CTk):
         self.pantalla = None
         self.after(0, lambda: self.state("zoomed") if sys.platform == "win32" else None)
         self.mostrar_login()
+
+    @staticmethod
+    def _registrar_error(texto):
+        try:
+            with open(db.carpeta_datos() / "errores.log", "a", encoding="utf-8") as f:
+                f.write(f"--- {datetime.now():%Y-%m-%d %H:%M:%S} (versión {VERSION}) ---\n{texto}\n")
+        except OSError:
+            pass
+
+    def _error_inesperado(self, tipo, valor, tb):
+        """Cualquier fallo no previsto se guarda en errores.log y se avisa al usuario en vez de pasar en silencio."""
+        self._registrar_error("".join(traceback.format_exception(tipo, valor, tb)))
+        messagebox.showerror("Error inesperado", f"Ha ocurrido un error inesperado:\n\n{valor}\n\n"
+                             f"Se ha guardado el detalle en:\n{db.carpeta_datos() / 'errores.log'}", parent=self)
 
     def _cambiar(self, pantalla):
         if self.pantalla is not None:
